@@ -55,4 +55,4 @@ Si uno o más documentos han sido incorporados (se encuentran en el *workingCopy
 
 Por último, al pulsar *Generar documento*, se generará el documento PDF unificado en la misma ubicación que el fichero *JAR*. La aplicación añade a este documento un índice clickable.
 
-**NOTA**: no se decidió emplear tiempo en el formato visual del índice, pero este funciona correctamente. La zona clickable de cada apartado parece estar ligeramente descentrada del texto y tiende a estar algo por debajo del mismo.
+**NOTA**: no se decidió emplear tiempo en el formato visual del índice, pero este funciona correctamente. La zona clickable de cada apartado parece estar ligeramente descentrada dos o tres píxeles hacia abajo con respecto al texto.
