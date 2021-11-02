@@ -44,8 +44,9 @@ La aplicación está desarrollada en Java 8 y Swing. Para la persistencia se uti
 
 La aplicación consta de un *JAR* y un fichero de base de datos vacío sobre el que ya se han pasado los parches y está listo para utilizarse.
 
-1. Colocar el fichero *JAR* donde se desee.
-2. Colocar el fichero de base de datos **en el home** del usuario.
+1. Descomprimir el fichero *consejo.7z*
+2. Colocar el fichero *JAR* donde se desee.
+3. Colocar el fichero de base de datos **en el home** del usuario.
 
 #### Usando la aplicación
 
@@ -53,6 +54,14 @@ Al ejecutar el *JAR*, se creará una carpeta llamada *workingCopy* en la misma u
 
 Si uno o más documentos han sido incorporados (se encuentran en el *workingCopy*) y posteriormente los documentos originales son modificados, al pulsar el botón de sincronización, se informará de cuáles son estos documentos que han cambiado y si se confirma el mensaje de aviso, los documentos del *workingCopy* serán actualizados.
 
-Por último, al pulsar *Generar documento*, se generará el documento PDF unificado en la misma ubicación que el fichero *JAR*. La aplicación añade a este documento un índice clickable.
+Al pulsar *Generar documento*, se generará el documento PDF unificado en la misma ubicación que el fichero *JAR*. La aplicación añade a este documento un índice clickable.
 
-**NOTA**: no se decidió emplear tiempo en el formato visual del índice, pero este funciona correctamente. La zona clickable de cada apartado parece estar ligeramente descentrada dos o tres píxeles hacia abajo con respecto al texto.
+La portada es un punto especial que no puede ser eliminado. Puede adjuntarse un documento o bien pulsar el botón *Generar* para crear una portada automáticamente siguiendo la plantilla del Consejo.
+
+#### Bugs detectados
+
+* Al pulsar el botón *Generar* para generar una portada, se creará un documento de portada. Si una vez que este documento existe se vuelve a pulsar el botón *Generar*, el programa arroja una excepción (seguramente por alguna comprobación muy sencilla) pero el documento no se genera pese a que aparece en la interfaz gráfica. Esto se puede comprobar porque si se pulsa el botón de *ver documento* este no se abrirá, y su fecha figurará como el 1/1/1970 00:00:00. Si esto ocurre, simplemente hay que pulsar en el icono de *borrar documento* y volver a generar o adjuntar una portada con normalidad.
+
+* No se decidió emplear tiempo en el formato visual del índice, pero este funciona correctamente. La zona clickable de cada apartado parece estar ligeramente descentrada dos o tres píxeles hacia abajo con respecto al texto.
+
+* Como se mencionó al principio, para avanzar lo más rápidamente posible, el programa no es *user safe* y no impide que se use incorrectamente o se llegue a situaciones de error. Por ejemplo, no se comprueba que se haya adjuntado o generado una portada antes de generar el documento final, entre otras situaciones.
