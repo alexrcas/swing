@@ -34,6 +34,11 @@ La aplicación está desarrollada en Java 8 y Swing. Para la persistencia se uti
 
 4. Editar el fichero *hibernate.cfg.xml* que se encuentra en  el directorio *resources*. Localizar la línea de configuración de la url de conexión y modificarla con la ruta que se eligió al crear la base de datos H2. En el siguiente ejemplo, el fichero de base de datos estaba en el home del usuario. Si es el caso, modificar también el usuario y la contraseña de acceso.
 
+Para compilar la aplicación, situarse en el directorio raíz y ejecutar:
+```
+mvn clean compile assembly:single
+```
+
 ```xml
 <property name="hibernate.connection.url"> jdbc:h2:file:~/consejo;DB_CLOSE_ON_EXIT=TRUE;FILE_LOCK=NO</property>
 ```
@@ -60,7 +65,7 @@ La portada es un punto especial que no puede ser eliminado. Puede adjuntarse un 
 
 #### Bugs detectados
 
-* Al pulsar el botón *Generar* para generar una portada, se creará un documento de portada. Si una vez que este documento existe se vuelve a pulsar el botón *Generar*, el programa arroja una excepción (seguramente por alguna comprobación muy sencilla) pero el documento no se genera pese a que aparece en la interfaz gráfica. Esto se puede comprobar porque si se pulsa el botón de *ver documento* este no se abrirá, y su fecha figurará como el 1/1/1970 00:00:00. Si esto ocurre, simplemente hay que pulsar en el icono de *borrar documento* y volver a generar o adjuntar una portada con normalidad.
+* **[CORREGIDO EN EL CÓDIO FUENTE PERO CAMBIOS NO PRESENTES EN EL EJECUTABLE]** - Al pulsar el botón *Generar* para generar una portada, se creará un documento de portada. Si una vez que este documento existe se vuelve a pulsar el botón *Generar*, el programa arroja una excepción (seguramente por alguna comprobación muy sencilla) pero el documento no se genera pese a que aparece en la interfaz gráfica. Esto se puede comprobar porque si se pulsa el botón de *ver documento* este no se abrirá, y su fecha figurará como el 1/1/1970 00:00:00. Si esto ocurre, simplemente hay que pulsar en el icono de *borrar documento* y volver a generar o adjuntar una portada con normalidad.
 
 * No se decidió emplear tiempo en el formato visual del índice, pero este funciona correctamente. La zona clickable de cada apartado parece estar ligeramente descentrada dos o tres píxeles hacia abajo con respecto al texto.
 
