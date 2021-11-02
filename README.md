@@ -44,8 +44,9 @@ La aplicación está desarrollada en Java 8 y Swing. Para la persistencia se uti
 
 La aplicación consta de un *JAR* y un fichero de base de datos vacío sobre el que ya se han pasado los parches y está listo para utilizarse.
 
-1. Colocar el fichero *JAR* donde se desee.
-2. Colocar el fichero de base de datos **en el home** del usuario.
+1. Descomprimir el fichero *consejo.7z*
+2. Colocar el fichero *JAR* donde se desee.
+3. Colocar el fichero de base de datos **en el home** del usuario.
 
 #### Usando la aplicación
 
