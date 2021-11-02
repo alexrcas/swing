@@ -133,14 +133,10 @@ public class DocumentoService {
             builder.withUri(rutaInput.toUri().toString());
             builder.toStream(os);
             builder.run();
+            os.close();
         
-        
-        Optional<Portada> portadaOpt = this.findPortada();
-        if (portadaOpt.isPresent()) {
-            this.eliminarPortada(portadaOpt.get());
-        }
-        
-        Portada portada = new Portada("portada_generada.pdf", rutaOutput.toString(), rutaOutput.toString());
+
+        Portada portada = new Portada("portada_generada.pdf", rutaOutput.toString(), Paths.get(this.workingCopyPath, "portada_generada.pdf").toString());
         this.saveOrUpdate(portada);
     }
     
