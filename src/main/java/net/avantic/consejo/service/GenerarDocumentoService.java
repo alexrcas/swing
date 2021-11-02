@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.avantic.consejo.MainForm;
@@ -56,7 +57,7 @@ public class GenerarDocumentoService {
         String nombreDocumentoGenerado = "DocumentoGenerado_" + now.format(formatter) + ".pdf";
         
         pdfMergerUtility.setDestinationFileName(nombreDocumentoGenerado);
-
+        
         documentosList.stream()
                 .map(documento -> new File(documento.getRutaWorkingCopy()))
                 .forEach(file -> {
@@ -77,9 +78,23 @@ public class GenerarDocumentoService {
         
         this.addPageNumber(nombreDocumentoGenerado, documentosList);
         this.crearIndice(nombreDocumentoGenerado, documentosList);
-        this.crearPortada(nombreDocumentoGenerado);
+        
+        this.addPortada(nombreDocumentoGenerado);
         
         this.visualizarDocumentoGenerado(nombreDocumentoGenerado);
+    }
+    
+    
+    private void addPortada(String nombreDocumentoGenerado) throws FileNotFoundException, IOException {
+        PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
+        pdfMergerUtility.setDestinationFileName(nombreDocumentoGenerado);
+        
+        Portada portada = documentoService.findPortada().get();
+        
+        pdfMergerUtility.addSource(new File(portada.getRutaWorkingCopy()));
+        pdfMergerUtility.addSource(new File(nombreDocumentoGenerado));
+        
+        pdfMergerUtility.mergeDocuments();
     }
     
     
@@ -91,22 +106,6 @@ public class GenerarDocumentoService {
                 Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-    
-    
-    private void crearPortada(String pdfPath) throws IOException {
-        
-        File documentoGenerado = new File(pdfPath);
-        
-        Portada portada = documentoService.findPortada().get();
-        File portadaFile = new File(portada.getRutaWorkingCopy());
-        
-        PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
-        pdfMergerUtility.setDestinationFileName(pdfPath);
-        
-        pdfMergerUtility.addSource(portadaFile);
-        pdfMergerUtility.addSource(documentoGenerado);
-        pdfMergerUtility.mergeDocuments();
     }
     
     

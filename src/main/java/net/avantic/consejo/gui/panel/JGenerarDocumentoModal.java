@@ -39,11 +39,11 @@ public class JGenerarDocumentoModal extends javax.swing.JPanel {
         Collections.reverse(puntosSet);
         
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Documento Generado");
-        
+
         DefaultTreeModel modelo = new DefaultTreeModel(root);
         
         this.jTree1.setModel(modelo);
-        
+       
         puntosSet.stream()
                 .forEach(nombrePunto -> {
                     
@@ -58,6 +58,14 @@ public class JGenerarDocumentoModal extends javax.swing.JPanel {
                                 modelo.insertNodeInto(nodoDocumento, nodoPunto, 0);
                             });
                 });
+        
+        
+                
+        DefaultMutableTreeNode nodoIndice = new DefaultMutableTreeNode("Índice");
+        modelo.insertNodeInto(nodoIndice, root, 0);
+        
+        DefaultMutableTreeNode nodoPortada = new DefaultMutableTreeNode("Portada");
+        modelo.insertNodeInto(nodoPortada, root, 0);
         
         this.expandAllNodes(this.jTree1, 0, this.jTree1.getRowCount());
     }

@@ -5,7 +5,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">org.h2.Driver</property>
-        <property name="hibernate.connection.url"> jdbc:h2:tcp://localhost/~/consejo;DB_CLOSE_ON_EXIT=TRUE;FILE_LOCK=NO</property>
+        <property name="hibernate.connection.url"> jdbc:h2:file:~/consejo;DB_CLOSE_ON_EXIT=TRUE;FILE_LOCK=NO</property>
         <property name="hibernate.connection.username">avantic</property>
         <property name="hibernate.connection.password">avantic</property>
         <property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</property>

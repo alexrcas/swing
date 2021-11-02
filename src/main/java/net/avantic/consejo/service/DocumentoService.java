@@ -5,8 +5,13 @@
  */
 package net.avantic.consejo.service;
 
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,18 +60,87 @@ public class DocumentoService {
     }
     
     
-    public void generarPortada() throws IOException {
+    public void generarPortada(String fecha, String hora) throws IOException {
         
-        Path ruta = Paths.get(this.workingCopyPath, "portada.pdf");
-        File portadaFile = new File(ruta.toString());
-        portadaFile.createNewFile();
+        Path rutaOutput = Paths.get(this.workingCopyPath, "portada_generada.pdf");
+        Path rutaInput = Paths.get("portada_template.html");
+
+        
+        PrintWriter writer = new PrintWriter(rutaInput.toString(), "UTF-8");
+        
+        writer.print("<html lang='es'>\n" +
+"<head>\n" +
+"<style>\n" +
+".row {\n" +
+"  display: block;\n" +
+"}\n" +
+".text-center {\n" +
+"  text-align: center;\n" +
+"}\n" +
+"\n" +
+".w-50 {\n" +
+"  width: 50%;\n" +
+"  margin: auto;\n" +
+"}\n" +
+".mb-10p {\n" +
+"  margin-bottom: 10px;\n" +
+"}\n" +
+".mt-20 {\n" +
+"  margin-top: 20%;\n" +
+"}\n" +
+"</style>\n" +
+"</head>\n" +
+"<body>\n" +
+"<div class='row text-center'>\n" +
+"<h3>Autoridad Portuaria</h3>\n" +
+"</div>\n" +
+"<div class='mt-20'>\n" +
+"<div class='row text-center'>\n" +
+"<h4>SESIÓN ORDINARIA DEL CONSEJO DE ADMINISTRACIÓN</h4>\n" +
+"</div>\n" +
+"<div class='row text-center'>\n" +
+"<h4>Fecha: " + fecha + "</h4>\n" +
+"</div>\n" +
+"<div class='row text-center'>\n" +
+"<h4>HORA: " + hora + "</h4>\n" +
+"</div>\n" +
+"<div class='row text-center'>\n" +
+"<h4>CONVOCATORIA</h4>\n" +
+"</div>\n" +
+"<div class='row text-center w-50'>\n" +
+"  <div class='row text-center mb-10p'>\n" +
+"    <span>\n" +
+"      Siguiendo indicaciones del Sr. Presidente se le convoca, como miembro del \n" +
+"      Órgano de Gobierno de la Autoridad Portuaria, a la sesión que se celebrará en \n" +
+"      la fecha y hora que se indica, en primera cita y, en su caso, una hora más tarde \n" +
+"      en segunda convocatoria, para tratar del Orden del Día que a continuación se \n" +
+"      consigna.\n" +
+"    </span>\n" +
+"  </div>\n" +
+"  <div class='row text-center'>\n" +
+"    <span>Se ruega que, en su caso, comunique la imposibilidad de su asistencia a la sesión.</span>\n" +
+"  </div>\n" +
+"</div>\n" +
+"</div>\n" +
+"</body>\n" +
+"</html>");
+        
+        writer.close();
+        
+        
+        OutputStream os = new FileOutputStream(rutaOutput.toString());
+            PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.withUri(rutaInput.toUri().toString());
+            builder.toStream(os);
+            builder.run();
+        
         
         Optional<Portada> portadaOpt = this.findPortada();
         if (portadaOpt.isPresent()) {
             this.eliminarPortada(portadaOpt.get());
         }
         
-        Portada portada = new Portada("portada.pdf", ruta.toString(), ruta.toString());
+        Portada portada = new Portada("portada_generada.pdf", rutaOutput.toString(), rutaOutput.toString());
         this.saveOrUpdate(portada);
     }
     

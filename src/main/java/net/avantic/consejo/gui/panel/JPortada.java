@@ -158,11 +158,17 @@ public class JPortada extends javax.swing.JPanel {
     }//GEN-LAST:event_addPortadaButtonActionPerformed
 
     private void generarPortadaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generarPortadaButtonActionPerformed
-        try {
-            this.documentoService.generarPortada();
-            this.actualizarPanel();
-        } catch (IOException ex) {
-            Logger.getLogger(JPortada.class.getName()).log(Level.SEVERE, null, ex);
+       
+        JGenerarPortadaModal modal = new JGenerarPortadaModal();
+        int seleccion = JOptionPane.showConfirmDialog(this, modal, "Generar Portada", JOptionPane.OK_CANCEL_OPTION);
+        
+        if (seleccion == 0) {
+            try {
+                this.documentoService.generarPortada(modal.getFecha(), modal.getHora());
+                this.actualizarPanel();
+            } catch (IOException ex) {
+                Logger.getLogger(JPortada.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_generarPortadaButtonActionPerformed
 
