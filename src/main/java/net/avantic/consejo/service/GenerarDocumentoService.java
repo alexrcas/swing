@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.avantic.consejo.MainForm;
 import net.avantic.consejo.model.Documento;
+import net.avantic.consejo.model.Portada;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -36,8 +37,15 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
  * @author alexr
  */
 public class GenerarDocumentoService {
-
     
+    private DocumentoService documentoService;
+
+    public GenerarDocumentoService() {
+        
+        this.documentoService = new DocumentoService();
+       
+    }
+
     public void generarDocumento(ArrayList<Documento> documentosList) throws IOException {
         
         PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
@@ -48,7 +56,7 @@ public class GenerarDocumentoService {
         String nombreDocumentoGenerado = "DocumentoGenerado_" + now.format(formatter) + ".pdf";
         
         pdfMergerUtility.setDestinationFileName(nombreDocumentoGenerado);
-        
+
         documentosList.stream()
                 .map(documento -> new File(documento.getRutaWorkingCopy()))
                 .forEach(file -> {
@@ -69,6 +77,7 @@ public class GenerarDocumentoService {
         
         this.addPageNumber(nombreDocumentoGenerado, documentosList);
         this.crearIndice(nombreDocumentoGenerado, documentosList);
+        this.crearPortada(nombreDocumentoGenerado);
         
         this.visualizarDocumentoGenerado(nombreDocumentoGenerado);
     }
@@ -82,6 +91,22 @@ public class GenerarDocumentoService {
                 Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    
+    
+    private void crearPortada(String pdfPath) throws IOException {
+        
+        File documentoGenerado = new File(pdfPath);
+        
+        Portada portada = documentoService.findPortada().get();
+        File portadaFile = new File(portada.getRutaWorkingCopy());
+        
+        PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
+        pdfMergerUtility.setDestinationFileName(pdfPath);
+        
+        pdfMergerUtility.addSource(portadaFile);
+        pdfMergerUtility.addSource(documentoGenerado);
+        pdfMergerUtility.mergeDocuments();
     }
     
     

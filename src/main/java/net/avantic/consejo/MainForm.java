@@ -21,8 +21,10 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import net.avantic.consejo.gui.panel.JCrearPuntoModal;
 import net.avantic.consejo.gui.panel.JGenerarDocumentoModal;
+import net.avantic.consejo.gui.panel.JPortada;
 import net.avantic.consejo.gui.panel.JSincronizarDocumentosModal;
 import net.avantic.consejo.model.Documento;
+import net.avantic.consejo.model.Portada;
 import net.avantic.consejo.model.Punto;
 import net.avantic.consejo.service.DocumentoService;
 import net.avantic.consejo.service.GenerarDocumentoService;
@@ -40,6 +42,7 @@ public class MainForm extends JFrame {
     private DocumentoService documentoService;
     private GenerarDocumentoService generarDocumentoService;
     private SyncService syncService;
+    private JPortada jPortada;
 
     /**
      * Creates new form MainForm
@@ -52,13 +55,15 @@ public class MainForm extends JFrame {
         
         initComponents();
         
+        this.pintarPortada();
+        
         this.syncButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/sync.png")).getImage()
             .getScaledInstance(16, 16, Image.SCALE_SMOOTH))); // NOI18
         
         this.jScrollPane1.setPreferredSize(new Dimension(800, 600));
         this.jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);
         this.mainPanel.setLayout(new BoxLayout(this.mainPanel, BoxLayout.Y_AXIS));
-        
+
         this.actualizarPanel();
     }
 
@@ -252,6 +257,13 @@ public class MainForm extends JFrame {
     }
     
     
+    private void pintarPortada() {
+        jPortada = new JPortada(this);
+        this.jPortada.setBorder(BorderFactory.createLineBorder(Color.gray));
+        
+    }
+    
+    
     private ArrayList<Punto> obtenerPuntos() {
         return this.puntoService.listPuntos().stream()
                 .sorted(Comparator.comparing(Punto::getPosicion))
@@ -261,6 +273,8 @@ public class MainForm extends JFrame {
 
     private void pintarPuntos(ArrayList<Punto> puntosOrdenadosPosicion) {
         this.mainPanel.removeAll();
+        
+        this.pintarPuntoPortada();
 
         Long cnt = 1L;
         for (Punto punto : puntosOrdenadosPosicion) {
@@ -270,6 +284,13 @@ public class MainForm extends JFrame {
             cnt++;
         }
         
+        this.mainPanel.revalidate();
+        this.mainPanel.repaint();
+    }
+    
+    
+    private void pintarPuntoPortada() {
+        this.mainPanel.add(this.jPortada);
         this.mainPanel.revalidate();
         this.mainPanel.repaint();
     }

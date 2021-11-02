@@ -1,3 +1,4 @@
 target/
 workingCopy/
 src/main/resources/h2/consejo.trace.db
+*.pdf
