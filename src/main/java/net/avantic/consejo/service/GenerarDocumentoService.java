@@ -159,20 +159,55 @@ public class GenerarDocumentoService {
         PDDocument pdDocument = PDDocument.load(new File(actaConsejoAnterior.getRuta()));
         paginaComienzoDocumento += pdDocument.getNumberOfPages();
         
+        
+        PDPage indicePage = new PDPage();  
+        PDPageContentStream stream = new PDPageContentStream(documentoPdf, indicePage, PDPageContentStream.AppendMode.APPEND, false, true);
+        stream.setNonStrokingColor(Color.BLACK);
+        
+        
         for(Documento documento : documentosList) {
             PDDocument pDDocument = PDDocument.load(new File(documento.getRuta()));
             indiceMap.put(documento.getId(), new Long(paginaComienzoDocumento));
             paginaComienzoDocumento += pDDocument.getNumberOfPages();
         }
          
-        
-        PDPage indicePage = new PDPage();
-        
-        PDPageContentStream stream = new PDPageContentStream(documentoPdf, indicePage, PDPageContentStream.AppendMode.APPEND, false, true);
-        stream.setNonStrokingColor(Color.BLACK);
-        
+
         
         int linea = 1;
+        
+        
+        PDAnnotationLink linkActa = new PDAnnotationLink();
+        PDPageDestination destinationActa = new PDPageFitWidthDestination();
+        PDActionGoTo actionActa = new PDActionGoTo();
+
+        int destinationPageActa = 0;
+        destinationActa.setPage(documentoPdf.getPage(destinationPageActa));
+        actionActa.setDestination(destinationActa);
+        linkActa.setAction(actionActa);
+        linkActa.setPage(indicePage);
+
+
+        PDRectangle positionActa = new PDRectangle();
+        positionActa.setLowerLeftX(10);
+        positionActa.setLowerLeftY(indicePage.getMediaBox().getHeight() - 20 * linea); 
+        positionActa.setUpperRightX(300); 
+        positionActa.setUpperRightY(positionActa.getLowerLeftY() - 10f); 
+
+        linkActa.setRectangle(positionActa);
+        indicePage.getAnnotations().add(linkActa);
+
+
+        stream.beginText();
+        stream.setFont(PDType1Font.COURIER_BOLD, 12);
+        stream.newLineAtOffset(10, indicePage.getMediaBox().getHeight() - 20 * linea);
+
+        String textoEntradaActa = "#Acta del consejo anterior" + " - Acta" + "..........." + (destinationPageActa + 1);
+        stream.showText(textoEntradaActa);
+        stream.endText();
+
+        linea++;
+        
+        
         for (Documento documento : documentosList) {
             
             PDAnnotationLink link = new PDAnnotationLink();
