@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import net.avantic.consejo.gui.panel.JCrearPuntoModal;
 import net.avantic.consejo.gui.panel.JGenerarDocumentoModal;
+import net.avantic.consejo.gui.panel.JIndice;
 import net.avantic.consejo.gui.panel.JPortada;
 import net.avantic.consejo.gui.panel.JSincronizarDocumentosModal;
 import net.avantic.consejo.model.Documento;
@@ -43,6 +44,7 @@ public class MainForm extends JFrame {
     private GenerarDocumentoService generarDocumentoService;
     private SyncService syncService;
     private JPortada jPortada;
+    private JIndice jIndice;
 
     /**
      * Creates new form MainForm
@@ -56,6 +58,8 @@ public class MainForm extends JFrame {
         initComponents();
         
         this.pintarPortada();
+        
+        this.pintarIndice();
         
         this.syncButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/sync.png")).getImage()
             .getScaledInstance(16, 16, Image.SCALE_SMOOTH))); // NOI18
@@ -260,7 +264,12 @@ public class MainForm extends JFrame {
     private void pintarPortada() {
         jPortada = new JPortada(this);
         this.jPortada.setBorder(BorderFactory.createLineBorder(Color.gray));
-        
+    }
+    
+    
+    private void pintarIndice() {
+        jIndice = new JIndice(this);
+        this.jIndice.setBorder(BorderFactory.createLineBorder(Color.gray));
     }
     
     
@@ -275,6 +284,7 @@ public class MainForm extends JFrame {
         this.mainPanel.removeAll();
         
         this.pintarPuntoPortada();
+        this.pintarPuntoIndice();
 
         Long cnt = 1L;
         for (Punto punto : puntosOrdenadosPosicion) {
@@ -291,6 +301,13 @@ public class MainForm extends JFrame {
     
     private void pintarPuntoPortada() {
         this.mainPanel.add(this.jPortada);
+        this.mainPanel.revalidate();
+        this.mainPanel.repaint();
+    }
+    
+    
+    private void pintarPuntoIndice() {
+        this.mainPanel.add(this.jIndice);
         this.mainPanel.revalidate();
         this.mainPanel.repaint();
     }

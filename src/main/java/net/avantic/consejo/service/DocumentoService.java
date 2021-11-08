@@ -19,6 +19,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Optional;
 import net.avantic.consejo.model.Documento;
+import net.avantic.consejo.model.Indice;
 import net.avantic.consejo.model.Portada;
 import net.avantic.consejo.model.Punto;
 import net.avantic.consejo.util.HibernateUtil;
@@ -173,6 +174,21 @@ public class DocumentoService {
     }
     
     
+    public Optional<Indice> findIndice() {
+        
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        ArrayList<Indice> indiceList = (ArrayList<Indice>) session.createCriteria(Indice.class)
+                .addOrder(Order.desc("id"))
+                .list();
+        
+        if (indiceList.isEmpty()) {
+            return Optional.empty();
+        }
+        
+        return Optional.of(indiceList.get(0));
+    }
+    
+    
     public void eliminarDocumento(Documento documento) {
         String rutaWorkingCopy = documento.getRutaWorkingCopy();
         File file = new File(rutaWorkingCopy);
@@ -188,6 +204,14 @@ public class DocumentoService {
         file.delete(); 
         
         this.delete(portada);
+    }
+    
+    public void eliminarIndice(Indice indice) {
+        String rutaWorkingCopy = indice.getRutaWorkingCopy();
+        File file = new File(rutaWorkingCopy);
+        file.delete(); 
+        
+        this.delete(indice);
     }
 
     
@@ -259,6 +283,19 @@ public class DocumentoService {
     }
     
     
+    public void saveOrUpdate(Indice indice) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        
+        session.saveOrUpdate(indice);
+        session.getTransaction().commit();
+        
+        if (session.isOpen()) {
+            session.close();
+        }
+    }
+    
+    
     public void delete(Documento documento) {
         
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -283,6 +320,35 @@ public class DocumentoService {
         if (session.isOpen()) {
             session.close();
         }
+    }
+    
+    
+    public void delete (Indice indice) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        
+        session.delete(indice);
+        session.getTransaction().commit();
+        
+        if (session.isOpen()) {
+            session.close();
+        }
+    }
+
+    public void crearIndice(String nombre, String ruta) throws IOException {
+        
+        Optional<Indice> indiceOpt = this.findIndice();
+        if (indiceOpt.isPresent()) {
+            this.eliminarIndice(indiceOpt.get());
+        }
+        
+        Path rutaOrigen = Paths.get(ruta);
+        String nombreFichero = rutaOrigen.getFileName().toString();
+        
+        Indice indice = new Indice(nombre, ruta, Paths.get(this.workingCopyPath, nombreFichero).toString());
+        Files.copy(rutaOrigen, Paths.get(this.workingCopyPath, nombreFichero), StandardCopyOption.REPLACE_EXISTING);
+        
+        this.saveOrUpdate(indice);
     }
     
 }

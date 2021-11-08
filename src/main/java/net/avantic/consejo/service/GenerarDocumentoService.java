@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.avantic.consejo.MainForm;
 import net.avantic.consejo.model.Documento;
+import net.avantic.consejo.model.Indice;
 import net.avantic.consejo.model.Portada;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -77,6 +78,7 @@ public class GenerarDocumentoService {
         }
         
         this.addPageNumber(nombreDocumentoGenerado, documentosList);
+        
         this.crearIndice(nombreDocumentoGenerado, documentosList);
         
         this.addPortada(nombreDocumentoGenerado);
@@ -109,7 +111,27 @@ public class GenerarDocumentoService {
     }
     
     
-    private void crearIndice(String pdfPath, ArrayList<Documento> documentosList) throws IOException{
+    private void adjuntarIndice(String nombreDocumentoGenerado) throws FileNotFoundException, IOException {
+        PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
+        pdfMergerUtility.setDestinationFileName(nombreDocumentoGenerado);
+        
+        Indice indice = documentoService.findIndice().get();
+        
+        pdfMergerUtility.addSource(new File(indice.getRutaWorkingCopy()));
+        pdfMergerUtility.addSource(new File(nombreDocumentoGenerado));
+        
+        pdfMergerUtility.mergeDocuments();
+    }
+    
+    
+    private void crearIndice(String pdfPath, ArrayList<Documento> documentosList) throws IOException {
+        
+        
+        Optional<Indice> indiceOpt = this.documentoService.findIndice();
+        if (indiceOpt.isPresent()) {
+            this.adjuntarIndice(pdfPath);
+            return;
+        }
         
         File mergePpdfFile = new File(pdfPath);
         PDDocument documentoPdf = PDDocument.load(mergePpdfFile);
