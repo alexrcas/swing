@@ -14,5 +14,6 @@
         <mapping class="net.avantic.consejo.model.Documento"></mapping>
         <mapping class="net.avantic.consejo.model.Portada"></mapping>
         <mapping class="net.avantic.consejo.model.Indice"></mapping>
+        <mapping class="net.avantic.consejo.model.ActaConsejoAnterior"></mapping>
     </session-factory>
 </hibernate-configuration>

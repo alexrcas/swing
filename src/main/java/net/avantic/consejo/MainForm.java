@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.*;
+import net.avantic.consejo.gui.panel.JActaConsejoAnterior;
 import net.avantic.consejo.gui.panel.JCrearPuntoModal;
 import net.avantic.consejo.gui.panel.JGenerarDocumentoModal;
 import net.avantic.consejo.gui.panel.JIndice;
@@ -45,6 +46,7 @@ public class MainForm extends JFrame {
     private SyncService syncService;
     private JPortada jPortada;
     private JIndice jIndice;
+    private JActaConsejoAnterior jActaConsejoAnterior;
 
     /**
      * Creates new form MainForm
@@ -60,6 +62,8 @@ public class MainForm extends JFrame {
         this.pintarPortada();
         
         this.pintarIndice();
+        
+        this.pintarActaConsejoAnterior();
         
         this.syncButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/sync.png")).getImage()
             .getScaledInstance(16, 16, Image.SCALE_SMOOTH))); // NOI18
@@ -273,6 +277,12 @@ public class MainForm extends JFrame {
     }
     
     
+    private void pintarActaConsejoAnterior() {
+        jActaConsejoAnterior = new JActaConsejoAnterior(this);
+        this.jActaConsejoAnterior.setBorder(BorderFactory.createLineBorder(Color.gray));
+    }
+    
+    
     private ArrayList<Punto> obtenerPuntos() {
         return this.puntoService.listPuntos().stream()
                 .sorted(Comparator.comparing(Punto::getPosicion))
@@ -285,6 +295,7 @@ public class MainForm extends JFrame {
         
         this.pintarPuntoPortada();
         this.pintarPuntoIndice();
+        this.pintarPuntoActaConsejoAnterior();
 
         Long cnt = 1L;
         for (Punto punto : puntosOrdenadosPosicion) {
@@ -308,6 +319,12 @@ public class MainForm extends JFrame {
     
     private void pintarPuntoIndice() {
         this.mainPanel.add(this.jIndice);
+        this.mainPanel.revalidate();
+        this.mainPanel.repaint();
+    }
+    
+    private void pintarPuntoActaConsejoAnterior() {
+        this.mainPanel.add(this.jActaConsejoAnterior);
         this.mainPanel.revalidate();
         this.mainPanel.repaint();
     }

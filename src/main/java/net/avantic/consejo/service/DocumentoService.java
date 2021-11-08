@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Optional;
+import net.avantic.consejo.model.ActaConsejoAnterior;
 import net.avantic.consejo.model.Documento;
 import net.avantic.consejo.model.Indice;
 import net.avantic.consejo.model.Portada;
@@ -188,6 +189,19 @@ public class DocumentoService {
         return Optional.of(indiceList.get(0));
     }
     
+    public Optional<ActaConsejoAnterior> findActaConsejoAnterior() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        ArrayList<ActaConsejoAnterior> actaConsejoAnteriorList = (ArrayList<ActaConsejoAnterior>) session.createCriteria(ActaConsejoAnterior.class)
+                .addOrder(Order.desc("id"))
+                .list();
+        
+        if (actaConsejoAnteriorList.isEmpty()) {
+            return Optional.empty();
+        }
+        
+        return Optional.of(actaConsejoAnteriorList.get(0));
+    }
+    
     
     public void eliminarDocumento(Documento documento) {
         String rutaWorkingCopy = documento.getRutaWorkingCopy();
@@ -212,6 +226,14 @@ public class DocumentoService {
         file.delete(); 
         
         this.delete(indice);
+    }
+    
+    public void eliminarActaConsejoAnterior(ActaConsejoAnterior actaConsejoAnterior) {
+        String rutaWorkingCopy = actaConsejoAnterior.getRutaWorkingCopy();
+        File file = new File(rutaWorkingCopy);
+        file.delete(); 
+        
+        this.delete(actaConsejoAnterior);
     }
 
     
@@ -295,6 +317,18 @@ public class DocumentoService {
         }
     }
     
+    public void saveOrUpdate(ActaConsejoAnterior actaConsejoAnterior) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        
+        session.saveOrUpdate(actaConsejoAnterior);
+        session.getTransaction().commit();
+        
+        if (session.isOpen()) {
+            session.close();
+        }
+    }
+    
     
     public void delete(Documento documento) {
         
@@ -334,6 +368,19 @@ public class DocumentoService {
             session.close();
         }
     }
+    
+    
+    public void delete (ActaConsejoAnterior actaConsejoAnterior) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        
+        session.delete(actaConsejoAnterior);
+        session.getTransaction().commit();
+        
+        if (session.isOpen()) {
+            session.close();
+        }
+    }
 
     public void crearIndice(String nombre, String ruta) throws IOException {
         
@@ -349,6 +396,22 @@ public class DocumentoService {
         Files.copy(rutaOrigen, Paths.get(this.workingCopyPath, nombreFichero), StandardCopyOption.REPLACE_EXISTING);
         
         this.saveOrUpdate(indice);
+    }
+
+    public void crearActaConsejoAnterior(String nombre, String ruta) throws IOException {
+        
+        Optional<ActaConsejoAnterior> actaConsejoAnteriorOpt = this.findActaConsejoAnterior();
+        if (actaConsejoAnteriorOpt.isPresent()) {
+            this.eliminarActaConsejoAnterior(actaConsejoAnteriorOpt.get());
+        }
+        
+        Path rutaOrigen = Paths.get(ruta);
+        String nombreFichero = rutaOrigen.getFileName().toString();
+        
+        ActaConsejoAnterior actaConsejoAnterior = new ActaConsejoAnterior(nombre, ruta, Paths.get(this.workingCopyPath, nombreFichero).toString());
+        Files.copy(rutaOrigen, Paths.get(this.workingCopyPath, nombreFichero), StandardCopyOption.REPLACE_EXISTING);
+        
+        this.saveOrUpdate(actaConsejoAnterior);
     }
     
 }

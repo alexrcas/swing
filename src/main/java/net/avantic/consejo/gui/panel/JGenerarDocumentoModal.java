@@ -60,13 +60,15 @@ public class JGenerarDocumentoModal extends javax.swing.JPanel {
                 });
         
         
-                
+        DefaultMutableTreeNode nodoActaConsejoAnterior = new DefaultMutableTreeNode("Acta del consejo anterior");
+        modelo.insertNodeInto(nodoActaConsejoAnterior, root, 0);
+        
         DefaultMutableTreeNode nodoIndice = new DefaultMutableTreeNode("Índice");
         modelo.insertNodeInto(nodoIndice, root, 0);
         
         DefaultMutableTreeNode nodoPortada = new DefaultMutableTreeNode("Portada");
         modelo.insertNodeInto(nodoPortada, root, 0);
-        
+
         this.expandAllNodes(this.jTree1, 0, this.jTree1.getRowCount());
     }
     

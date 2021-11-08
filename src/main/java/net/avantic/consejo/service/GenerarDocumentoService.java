@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.avantic.consejo.MainForm;
+import net.avantic.consejo.model.ActaConsejoAnterior;
 import net.avantic.consejo.model.Documento;
 import net.avantic.consejo.model.Indice;
 import net.avantic.consejo.model.Portada;
@@ -77,8 +78,9 @@ public class GenerarDocumentoService {
             throw new RuntimeException(ex);
         }
         
-        this.addPageNumber(nombreDocumentoGenerado, documentosList);
+        this.adjuntarActaConsejoAnterior(nombreDocumentoGenerado);
         
+        this.addPageNumber(nombreDocumentoGenerado, documentosList);
         this.crearIndice(nombreDocumentoGenerado, documentosList);
         
         this.addPortada(nombreDocumentoGenerado);
@@ -124,6 +126,19 @@ public class GenerarDocumentoService {
     }
     
     
+    private void adjuntarActaConsejoAnterior(String nombreDocumentoGenerado) throws FileNotFoundException, IOException {
+        PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
+        pdfMergerUtility.setDestinationFileName(nombreDocumentoGenerado);
+        
+        ActaConsejoAnterior actaConsejoAnterior = documentoService.findActaConsejoAnterior().get();
+        
+        pdfMergerUtility.addSource(new File(actaConsejoAnterior.getRutaWorkingCopy()));
+        pdfMergerUtility.addSource(new File(nombreDocumentoGenerado));
+        
+        pdfMergerUtility.mergeDocuments();
+    }
+    
+    
     private void crearIndice(String pdfPath, ArrayList<Documento> documentosList) throws IOException {
         
         
@@ -139,6 +154,11 @@ public class GenerarDocumentoService {
         Map<Long, Long> indiceMap = new HashMap<>();
         
         int paginaComienzoDocumento = 1;
+        
+        ActaConsejoAnterior actaConsejoAnterior = this.documentoService.findActaConsejoAnterior().get();
+        PDDocument pdDocument = PDDocument.load(new File(actaConsejoAnterior.getRuta()));
+        paginaComienzoDocumento += pdDocument.getNumberOfPages();
+        
         for(Documento documento : documentosList) {
             PDDocument pDDocument = PDDocument.load(new File(documento.getRuta()));
             indiceMap.put(documento.getId(), new Long(paginaComienzoDocumento));
