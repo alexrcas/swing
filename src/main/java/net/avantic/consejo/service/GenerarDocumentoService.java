@@ -91,24 +91,25 @@ public class GenerarDocumentoService {
             throw new RuntimeException(ex);
         }
         
+        this.crearCaratulas(nombreDocumentoGenerado, documentosList);
+        
         this.adjuntarActaConsejoAnterior(nombreDocumentoGenerado);
         
         this.addPageNumber(nombreDocumentoGenerado, documentosList);
 
-        this.crearCaratulas(nombreDocumentoGenerado, documentosList);
-  
         this.crearIndice(nombreDocumentoGenerado, documentosList);
         
         this.addPortada(nombreDocumentoGenerado);
         
         this.visualizarDocumentoGenerado(nombreDocumentoGenerado);
     }
+
     
-    
-    private void crearCaratulas(String pdfPath, ArrayList<Documento> documentosList) throws IOException {
+     private void crearCaratulas(String pdfPath, ArrayList<Documento> documentosList) throws IOException {
         
         Map<Long, Long> indiceMap = new HashMap<>();
-        int paginaComienzoDocumento = 1;
+        int paginaComienzoDocumento = 0;
+        
         
         for (Documento documento : documentosList) {
             
@@ -117,20 +118,24 @@ public class GenerarDocumentoService {
             paginaComienzoDocumento += pDDocument.getNumberOfPages();
             pDDocument.close();
         }
-        
+
         File file = new File(pdfPath);
         PDDocument documentoGenerado = PDDocument.load(file);
         
-        this.puntoService.listPuntos().stream()
-                .map(this.documentoService::listDocumentosByPuntoOrderByPosicion)
-                .forEach(docList -> {
+        int offset = 0;
+        
+        ArrayList<Punto> puntosList = this.puntoService.listPuntos();
+        
+        for (Punto punto : puntosList) {
+            
+            Documento primerDocumentoPunto = this.documentoService.listDocumentosByPuntoOrderByPosicion(punto).get(0);
+            
+            if (primerDocumentoPunto.getPunto().isGeneraCaratula()) {
+                    Long paginaCaratula = indiceMap.get(primerDocumentoPunto.getId()) + offset;
+                    offset++;
                     
-            try {
-                
-                Documento primerDocumentoPunto = docList.get(0);
-                
-                if (primerDocumentoPunto.getPunto().isGeneraCaratula()) {
-                    Long paginaCaratula = indiceMap.get(primerDocumentoPunto.getId());
+                    System.out.println(primerDocumentoPunto.getId() + " - " + primerDocumentoPunto.getNombre());
+                    System.out.println(indiceMap);
 
                     PDPage caratulaPage = new PDPage();
                     PDPageContentStream stream = new PDPageContentStream(documentoGenerado, caratulaPage, PDPageContentStream.AppendMode.APPEND, false, true);
@@ -139,7 +144,7 @@ public class GenerarDocumentoService {
                     stream.setFont(PDType1Font.COURIER_BOLD, 12);
                     stream.newLineAtOffset(10, caratulaPage.getMediaBox().getHeight() - 20 * 5);
 
-                    String textoEntradaActa = "Caratula";
+                    String textoEntradaActa = "CARÁTULA " + primerDocumentoPunto.getPunto().getDescripcion();
                     stream.showText(textoEntradaActa);
                     stream.endText();
 
@@ -151,15 +156,11 @@ public class GenerarDocumentoService {
 
                     documentoGenerado.save(file);
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(GenerarDocumentoService.class.getName()).log(Level.SEVERE, null, ex);
-            }
-                    
-                });
+        }
+
 
         documentoGenerado.close();
     }
-    
     
     private void addPortada(String nombreDocumentoGenerado) throws FileNotFoundException, IOException {
         PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
