@@ -13,16 +13,26 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import static java.util.Comparator.comparingInt;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.collectingAndThen;
 import net.avantic.consejo.MainForm;
 import net.avantic.consejo.model.ActaConsejoAnterior;
 import net.avantic.consejo.model.Documento;
 import net.avantic.consejo.model.Indice;
 import net.avantic.consejo.model.Portada;
+import net.avantic.consejo.model.Punto;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -42,10 +52,13 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 public class GenerarDocumentoService {
     
     private DocumentoService documentoService;
+    
+    private PuntoService puntoService;
 
     public GenerarDocumentoService() {
         
         this.documentoService = new DocumentoService();
+        this.puntoService = new PuntoService();
        
     }
 
@@ -81,11 +94,70 @@ public class GenerarDocumentoService {
         this.adjuntarActaConsejoAnterior(nombreDocumentoGenerado);
         
         this.addPageNumber(nombreDocumentoGenerado, documentosList);
+
+        this.crearCaratulas(nombreDocumentoGenerado, documentosList);
+  
         this.crearIndice(nombreDocumentoGenerado, documentosList);
         
         this.addPortada(nombreDocumentoGenerado);
         
         this.visualizarDocumentoGenerado(nombreDocumentoGenerado);
+    }
+    
+    
+    private void crearCaratulas(String pdfPath, ArrayList<Documento> documentosList) throws IOException {
+        
+        Map<Long, Long> indiceMap = new HashMap<>();
+        int paginaComienzoDocumento = 1;
+        
+        for (Documento documento : documentosList) {
+            
+            PDDocument pDDocument = PDDocument.load(new File(documento.getRuta()));
+            indiceMap.put(documento.getId(), new Long(paginaComienzoDocumento));
+            paginaComienzoDocumento += pDDocument.getNumberOfPages();
+            pDDocument.close();
+        }
+        
+        File file = new File(pdfPath);
+        PDDocument documentoGenerado = PDDocument.load(file);
+        
+        this.puntoService.listPuntos().stream()
+                .map(this.documentoService::listDocumentosByPuntoOrderByPosicion)
+                .forEach(docList -> {
+                    
+            try {
+                
+                Documento primerDocumentoPunto = docList.get(0);
+                
+                if (primerDocumentoPunto.getPunto().isGeneraCaratula()) {
+                    Long paginaCaratula = indiceMap.get(primerDocumentoPunto.getId());
+
+                    PDPage caratulaPage = new PDPage();
+                    PDPageContentStream stream = new PDPageContentStream(documentoGenerado, caratulaPage, PDPageContentStream.AppendMode.APPEND, false, true);
+
+                    stream.beginText();
+                    stream.setFont(PDType1Font.COURIER_BOLD, 12);
+                    stream.newLineAtOffset(10, caratulaPage.getMediaBox().getHeight() - 20 * 5);
+
+                    String textoEntradaActa = "Caratula";
+                    stream.showText(textoEntradaActa);
+                    stream.endText();
+
+                    stream.close();
+
+
+                    PDPageTree allPages = documentoGenerado.getDocumentCatalog().getPages();
+                    allPages.insertBefore(caratulaPage, allPages.get(paginaCaratula.intValue()));
+
+                    documentoGenerado.save(file);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(GenerarDocumentoService.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                    
+                });
+
+        documentoGenerado.close();
     }
     
     
@@ -103,7 +175,7 @@ public class GenerarDocumentoService {
     
     
     private void visualizarDocumentoGenerado(String ruta) {
-                if (Desktop.isDesktopSupported()) {
+        if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().open(new File(ruta));
             } catch (IOException ex) {
@@ -164,18 +236,16 @@ public class GenerarDocumentoService {
         PDPageContentStream stream = new PDPageContentStream(documentoPdf, indicePage, PDPageContentStream.AppendMode.APPEND, false, true);
         stream.setNonStrokingColor(Color.BLACK);
         
-        
+
         for(Documento documento : documentosList) {
             PDDocument pDDocument = PDDocument.load(new File(documento.getRuta()));
             indiceMap.put(documento.getId(), new Long(paginaComienzoDocumento));
             paginaComienzoDocumento += pDDocument.getNumberOfPages();
         }
-         
 
         
         int linea = 1;
-        
-        
+
         PDAnnotationLink linkActa = new PDAnnotationLink();
         PDPageDestination destinationActa = new PDPageFitWidthDestination();
         PDActionGoTo actionActa = new PDActionGoTo();
@@ -276,5 +346,6 @@ public class GenerarDocumentoService {
     document.save(pdfPath);
     document.close();
 }
+
     
 }

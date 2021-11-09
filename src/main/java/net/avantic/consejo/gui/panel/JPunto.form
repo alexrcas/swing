@@ -34,7 +34,9 @@
                       <Component id="nombreLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="descripcionLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="397" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="114" max="-2" attributes="0"/>
+                      <Component id="generaCaratulaCheckBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="164" max="32767" attributes="0"/>
                       <Component id="subirButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="bajarButton" min="-2" max="-2" attributes="0"/>
@@ -65,6 +67,7 @@
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="nombreLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="descripcionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="generaCaratulaCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="eliminarButton" pref="32" max="32767" attributes="0"/>
                   <Component id="subirButton" alignment="0" max="32767" attributes="0"/>
@@ -166,6 +169,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editarButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="generaCaratulaCheckBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Genera car&#xe1;tula"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="generaCaratulaCheckBoxActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

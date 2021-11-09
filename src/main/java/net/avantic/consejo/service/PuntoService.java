@@ -6,10 +6,12 @@
 package net.avantic.consejo.service;
 
 import java.util.ArrayList;
+import net.avantic.consejo.model.Documento;
 import net.avantic.consejo.model.Punto;
 import net.avantic.consejo.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 
 /**
@@ -30,6 +32,7 @@ public class PuntoService {
         }
         return puntosList;
     }
+    
     
     
     public void saveOrUpdate(Punto punto) {

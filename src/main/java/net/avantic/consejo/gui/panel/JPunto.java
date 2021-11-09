@@ -53,6 +53,8 @@ public class JPunto extends javax.swing.JPanel {
         this.descripcionLabel.setText(punto.getDescripcion());
         this.jLabel1.setText("#".concat(position.toString()));
         
+        this.generaCaratulaCheckBox.setSelected(punto.isGeneraCaratula());
+        
         this.documentosPanel.setLayout(new BoxLayout(this.documentosPanel, BoxLayout.Y_AXIS));
         
         this.cargarIconos();
@@ -99,6 +101,7 @@ public class JPunto extends javax.swing.JPanel {
         subirButton = new javax.swing.JButton();
         bajarButton = new javax.swing.JButton();
         editarButton = new javax.swing.JButton();
+        generaCaratulaCheckBox = new javax.swing.JCheckBox();
 
         setBackground(new java.awt.Color(141, 178, 214));
         setMaximumSize(new java.awt.Dimension(32767, 10000));
@@ -159,6 +162,13 @@ public class JPunto extends javax.swing.JPanel {
             }
         });
 
+        generaCaratulaCheckBox.setText("Genera carátula");
+        generaCaratulaCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generaCaratulaCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -173,7 +183,9 @@ public class JPunto extends javax.swing.JPanel {
                         .addComponent(nombreLabel)
                         .addGap(18, 18, 18)
                         .addComponent(descripcionLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 397, Short.MAX_VALUE)
+                        .addGap(114, 114, 114)
+                        .addComponent(generaCaratulaCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
                         .addComponent(subirButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bajarButton)
@@ -198,7 +210,8 @@ public class JPunto extends javax.swing.JPanel {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1)
                         .addComponent(nombreLabel)
-                        .addComponent(descripcionLabel))
+                        .addComponent(descripcionLabel)
+                        .addComponent(generaCaratulaCheckBox))
                     .addComponent(eliminarButton, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
                     .addComponent(subirButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(bajarButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -208,7 +221,7 @@ public class JPunto extends javax.swing.JPanel {
                     .addComponent(guardarDocumentoButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(documentosPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(5, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -257,6 +270,12 @@ public class JPunto extends javax.swing.JPanel {
             
         }
     }//GEN-LAST:event_editarButtonActionPerformed
+
+    private void generaCaratulaCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generaCaratulaCheckBoxActionPerformed
+
+        this.punto.setGeneraCaratula(this.generaCaratulaCheckBox.isSelected());
+        this.puntoService.saveOrUpdate(this.punto);
+    }//GEN-LAST:event_generaCaratulaCheckBoxActionPerformed
 
  
     private void actualizarPanel() {
@@ -345,6 +364,7 @@ public class JPunto extends javax.swing.JPanel {
     private javax.swing.JPanel documentosPanel;
     private javax.swing.JButton editarButton;
     private javax.swing.JButton eliminarButton;
+    private javax.swing.JCheckBox generaCaratulaCheckBox;
     private javax.swing.JButton guardarDocumentoButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

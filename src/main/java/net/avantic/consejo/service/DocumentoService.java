@@ -27,6 +27,7 @@ import net.avantic.consejo.util.HibernateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 
@@ -263,7 +264,8 @@ public class DocumentoService {
         return documentosList;
     }
     
-        public ArrayList<Documento> listDocumentosByPuntoOrderByPosicion(Punto punto) {
+    
+    public ArrayList<Documento> listDocumentosByPuntoOrderByPosicion(Punto punto) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         
         ArrayList<Documento> documentosList = (ArrayList<Documento>) session.createCriteria(Documento.class)
@@ -276,7 +278,6 @@ public class DocumentoService {
         }
         return documentosList;
     }
-    
     
     public void saveOrUpdate(Documento documento) {
         

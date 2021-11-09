@@ -36,6 +36,9 @@ public class Punto implements Serializable {
     
     @Column(name = "DESCRIPCION", nullable = false, length = 255)
     private String descripcion;
+    
+    @Column(name = "GENERACARATULA", nullable = false)
+    private boolean generaCaratula;
 
     
     public Punto() {
@@ -44,6 +47,7 @@ public class Punto implements Serializable {
     public Punto(String nombre, String descripcion) {
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.generaCaratula = true;
     }
 
     public Long getId() {
@@ -78,11 +82,18 @@ public class Punto implements Serializable {
         this.descripcion = descripcion;
     }
 
+    public boolean isGeneraCaratula() {
+        return generaCaratula;
+    }
+
+    public void setGeneraCaratula(boolean generaCaratula) {
+        this.generaCaratula = generaCaratula;
+    }
+
     @Override
     public String toString() {
-        return "Punto{" + "id=" + id + ", posicion=" + posicion + ", nombre=" + nombre + ", descripcion=" + descripcion + '}';
+        return "Punto{" + "id=" + id + ", posicion=" + posicion + ", nombre=" + nombre + ", descripcion=" + descripcion + ", generaCaratula=" + generaCaratula + '}';
     }
-    
-    
+        
     
 }
